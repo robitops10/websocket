@@ -5,7 +5,7 @@ const wss = new WebSocket.Server( {port: 8181} ); 					// app.listen( 8181, () =
 
 const clients = [];
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws) => { 															// (1) : On Every Page Refresh: Create new Connection.
 	console.log('Client Connected');
 
 	const data = {
@@ -13,19 +13,26 @@ wss.on('connection', (ws) => {
 	 	id: v4(), 
 	 	ws
 	};
-	clients.push(data); 																			// Store Every user data into a variable
+	clients.push(data); 																			
 
-	ws.on('message', (message) => {
-		for( item of clients ) {
-			const data = {
-				id: item.id,
-				message
-			};
-
-			ws.send( JSON.stringify( data, null, 2 ) ); 					// Send User with ID, & his data.
-			console.log( data ); 																	// View what is sending to Client in Terminal
+	ws.on('message', (message) => { 													// (3) : Fire when user Reply = submit form
+		if( ws.readyState === 1 ) {
+			clients.map( (item) => {
+				const json = { id: item.id, message };
+				ws.send( JSON.stringify(json, null, 2) );
+				console.log( JSON.stringify(json, null, 2) );
+			});
 		}
-	}); 												
-});
+	}); // End of message Event
 
 
+	ws.on('close', () => {																		// (2) : On Every Page Refresh: Close old Connection 
+		clients.map( (item, index) => {
+			if( item.id === clients[index].id ) {
+				console.log( `client [ ${item.id} ] disconnected.` );
+				clients.splice( index, 1);
+			}
+		});
+	});
+
+}); // End of Connection
