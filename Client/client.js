@@ -14,7 +14,7 @@ $('#btn').addEventListener('click', (e)=> {
 	e.preventDefault();
 
 	ws.send( $('#name').value ); 												// This Data catched by the server (See on Terminal)
-	console.log( $('#name').value );
+	// console.log( $('#name').value );
 
 });
 
