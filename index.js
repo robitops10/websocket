@@ -1,9 +1,7 @@
-
 const WebSocket = require('ws'); 														// const app =  require('express')()
 const v4 = require('uuid').v4;
 
 const wss = new WebSocket.Server( {port: 8181} ); 					// app.listen( 8181, () => console.log('server'))
-
 
 const clients = [];
 
@@ -15,19 +13,19 @@ wss.on('connection', (ws) => {
 	 	id: v4(), 
 	 	ws
 	};
-	
+	clients.push(data); 																			// Store Every user data into a variable
+
 	ws.on('message', (message) => {
-		data.message = message;
+		for( item of clients ) {
+			const data = {
+				id: item.id,
+				message
+			};
 
-		console.log( message ); 										// When get some message 
-		ws.send('ok'); 															// Reply this
+			ws.send( JSON.stringify( data, null, 2 ) ); 					// Send User with ID, & his data.
+			console.log( data ); 																	// View what is sending to Client in Terminal
+		}
 	}); 												
-
-
-	clients.push(data); 													// Store data
-	console.log( clients ); 											// See on Server Terminal (Console)
-
-
 });
 
 
