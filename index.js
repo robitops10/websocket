@@ -15,11 +15,11 @@ wss.on('connection', (ws) => { 															// (1) : On Every Page Refresh: Cr
 	};
 	clients.push(data); 																			
 
-	ws.on('message', (message) => { 													// (3) : Fire when user Reply = submit form
+	ws.on('message', (message) => { 													// (3) : Fire when user Reply, we capture with on('message', (data) => data)
 		if( ws.readyState === 1 ) {
 			clients.map( (item) => {
 				const json = { id: item.id, message };
-				ws.send( JSON.stringify(json, null, 2) );
+				ws.send( JSON.stringify(json) ); 										// (4) : Server Send, Client capture with on('message', (e) => {e.data})
 				console.log( JSON.stringify(json, null, 2) );
 			});
 		}
@@ -31,6 +31,8 @@ wss.on('connection', (ws) => { 															// (1) : On Every Page Refresh: Cr
 			if( item.id === clients[index].id ) {
 				console.log( `client [ ${item.id} ] disconnected.` );
 				clients.splice( index, 1);
+
+				console.clear(); 																		// when connection close clear the terminal too
 			}
 		});
 	});
